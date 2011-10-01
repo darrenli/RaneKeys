@@ -1,0 +1,19 @@
+# Mac OS X
+.DS_Store
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.xcuserstate
+*.perspective
+*.perspectivev3
+project.xcworkspace/
+xcuserdata/
+build/
+
+# Backup files
+*.swp
+*~.nib
+
+
