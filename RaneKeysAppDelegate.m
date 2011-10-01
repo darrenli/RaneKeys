@@ -28,6 +28,7 @@
     NSLog(@"registered hotkey - show info");       
   }
   
+  //Play or Pause
   if(![hotKeyCenter registerHotKeyWithKeyCode:49
                                 modifierFlags:NSControlKeyMask
                                        target:self
@@ -39,7 +40,19 @@
     NSLog(@"registered hotkey - play pause");       
   }
   
-  //
+  //Turn on Spotify
+  if(![hotKeyCenter registerHotKeyWithKeyCode:37
+                                modifierFlags:(NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask)
+                                       target:self
+                                       action:@selector(hotkeyWithEvent:object:)
+                                       object:@"Turn On"]) {
+    NSLog(@"failed to register hotkey.");
+  }
+  else {
+    NSLog(@"registered hotkey - turn on");       
+  }
+  
+  
   if(![hotKeyCenter registerHotKeyWithKeyCode:123
                                 modifierFlags:(NSAlternateKeyMask | NSCommandKeyMask)
                                        target:self
@@ -96,23 +109,10 @@
 }
 
 - (void) hotkeyWithEvent:(NSEvent *)hkEvent object:(id)anObject {
-//  NSLog(@"hotkey win!!");
-//  NSLog(@"%@",[[spotifyApp currentTrack] name]);
-//  NSLog(@"%@",[[spotifyApp currentTrack] artist]);
-//  NSLog(@"%@",[[spotifyApp currentTrack] artwork]);
-//  //NSLog(@"Event: %@", hkEvent);
-//  
-//  /*
-//  NSLog(@"%d",[spotifyApp playerState]);
-//  if([spotifyApp playerState] == SpotifyEPlSStopped)
-//    NSLog(@"stopped");
-//  else if([spotifyApp playerState] == SpotifyEPlSPaused)
-//    NSLog(@"paused");
-//  else if([spotifyApp playerState] == SpotifyEPlSPlaying)
-//    NSLog(@"playing");
-//  */
+  NSLog(@"%@ Hotkey Pressed",(NSString*)anObject);
   
   BOOL isPlaying = ([spotifyApp playerState] == SpotifyEPlSPlaying);
+  BOOL isTurnOn = [(NSString*)anObject isEqualToString:@"Turn On"];
   BOOL isVolumeUp = [(NSString*)anObject isEqualToString:@"Volume Up"];
   BOOL isVolumeDown = [(NSString*)anObject isEqualToString:@"Volume Down"];
   BOOL isPlayCommand = [(NSString*)anObject isEqualToString:@"Play Pause"];
@@ -121,8 +121,12 @@
   BOOL isGrowlRunning = [GrowlApplicationBridge isGrowlRunning];
   BOOL isSpotifyRunning = [spotifyApp isRunning];
   
-  if(isGrowlRunning && isSpotifyRunning) {    
-    
+  if(!isSpotifyRunning && isTurnOn) {
+    [spotifyApp playpause];
+  }
+  
+  
+  if(isSpotifyRunning) {
     //Play or Pause
     if(isPlayCommand) {
       [spotifyApp playpause];
@@ -157,15 +161,69 @@
       spotifyApp.soundVolume = volume;
     }
     
-    
-    if(isPlaying && !(isVolumeUp || isVolumeDown)) {
-      [GrowlApplicationBridge notifyWithTitle:[[spotifyApp currentTrack] name]
-                                  description:[[spotifyApp currentTrack] artist]
-                             notificationName:@"Song Info"
-                                     iconData:[[[spotifyApp currentTrack] artwork] TIFFRepresentation]
-                                     priority:0
-                                     isSticky:NO
-                                 clickContext:nil];
+    if(isGrowlRunning) {
+      if(!(isVolumeUp || isVolumeDown)) {
+        NSInteger trackDuration = [[spotifyApp currentTrack] duration];
+        NSInteger currentPosition = (NSInteger)[spotifyApp playerPosition];
+        
+        NSInteger trackDurationMinutes = trackDuration / 60;
+        NSInteger trackDurationSeconds = trackDuration % 60;
+        NSInteger currentPositionMinutes = currentPosition / 60;
+        NSInteger currentPositionSeconds = currentPosition % 60;
+        
+        NSString *timeStamp = [NSString stringWithFormat:@"%d:%02d of %d:%02d",currentPositionMinutes,currentPositionSeconds,trackDurationMinutes,trackDurationSeconds];
+        
+
+        
+        NSString *spotifySongInfo = [NSString stringWithString:[[spotifyApp currentTrack] name]];
+        NSInteger oldLength = [spotifySongInfo length];
+        NSRange stringRange = {0, MIN([spotifySongInfo length], 30)};
+        stringRange = [spotifySongInfo rangeOfComposedCharacterSequencesForRange:stringRange];
+        spotifySongInfo = [spotifySongInfo substringWithRange:stringRange];
+        if(oldLength > [spotifySongInfo length])
+          spotifySongInfo = [spotifySongInfo stringByAppendingString:@"..."];
+
+        NSString *spotifyStringDescription = [NSString stringWithFormat:@"%@",[[spotifyApp currentTrack] artist]];
+        oldLength = [spotifyStringDescription length];
+        NSRange stringRangeDesc = {0, MIN([spotifyStringDescription length], 30)};
+        stringRangeDesc = [spotifyStringDescription rangeOfComposedCharacterSequencesForRange:stringRangeDesc];
+        spotifyStringDescription = [spotifyStringDescription substringWithRange:stringRangeDesc];
+        if(oldLength > [spotifyStringDescription length])
+          spotifyStringDescription = [spotifyStringDescription stringByAppendingFormat:@"..."];
+
+        NSString *theInfo = timeStamp;
+        if([spotifyApp playerState] == SpotifyEPlSPaused)
+          theInfo = [theInfo stringByAppendingString:@" (Paused)"];
+        else if([spotifyApp playerState] == SpotifyEPlSStopped)
+          theInfo = [theInfo stringByAppendingString:@" (Stopped)"];
+        
+        [GrowlApplicationBridge notifyWithTitle:[NSString stringWithFormat:@"%@\n%@",spotifySongInfo,spotifyStringDescription]
+                                    description:theInfo
+                               notificationName:@"Song Info"
+                                       iconData:[[[spotifyApp currentTrack] artwork] TIFFRepresentation]
+                                       priority:0
+                                       isSticky:NO
+                                   clickContext:nil];
+      }
+      else if(isVolumeUp || isVolumeDown) {
+        NSString *volumeDescription = [NSString stringWithFormat:@"%d%% Volume", [spotifyApp soundVolume]];
+        if(isVolumeUp)
+          [GrowlApplicationBridge notifyWithTitle:@"Increased Volume"
+                                      description:volumeDescription
+                                 notificationName:@"Volume Control"
+                                         iconData:nil
+                                         priority:0
+                                         isSticky:NO
+                                     clickContext:nil];
+        else if(isVolumeDown)
+          [GrowlApplicationBridge notifyWithTitle:@"Decreased Volume"
+                                      description:volumeDescription
+                                 notificationName:@"Volume Control"
+                                         iconData:nil
+                                         priority:0
+                                         isSticky:NO
+                                     clickContext:nil];
+      }
     }
   }
   else {

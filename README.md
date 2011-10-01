@@ -1,7 +1,9 @@
 RaneKeys
 ========
 
-Hotkeys and Growl Notifications for Spotify
+About
+-----
+Global Hotkeys and Growl Notifications for Spotify
 
 Requirements
 ------------
@@ -15,3 +17,7 @@ Usage
 * Option-Command-Left -- Previous Track
 * Option-Command-Up -- Volume Up
 * Option-Command-Down -- Volume Down
+
+Thanks
+------
+Thanks to Dave Delong for his [DDHotKey Class](https://github.com/davedelong/DDHotKey)

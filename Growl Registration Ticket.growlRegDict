@@ -7,10 +7,12 @@
 		<key>AllNotifications</key>
 		<array>
 			<string>Song Info</string>
+      <string>Volume Control</string>
 		</array>
 		<key>DefaultNotifications</key>
 		<array>
 			<string>Song Info</string>
+      <string>Volume Control</string>
 		</array>
     </dict>
 </plist>

@@ -11,7 +11,7 @@
 #import "Spotify.h"
 #import <Growl-WithInstaller/GrowlApplicationBridge.h>
 
-#define VOLUME_INC 5
+#define VOLUME_INC 8
 
 
 @interface RaneKeysAppDelegate : NSObject <NSApplicationDelegate, GrowlApplicationBridgeDelegate> {

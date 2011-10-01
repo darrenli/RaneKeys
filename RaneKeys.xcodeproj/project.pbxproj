@@ -12,6 +12,7 @@
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		900DA1671436C95D0032BFB8 /* Growl-WithInstaller.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 90DA3CE01436BFB500C00032 /* Growl-WithInstaller.framework */; };
 		902AE0EA1435D44600793D92 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 902AE0E91435D44600793D92 /* Icon.icns */; };
 		90ABC5271435AA7D00CCAD1A /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90ABC5261435AA7D00CCAD1A /* Carbon.framework */; };
 		90ABC5591435AC2100CCAD1A /* DDHotKeyCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 90ABC5581435AC2100CCAD1A /* DDHotKeyCenter.m */; };
@@ -21,12 +22,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		90D708561435BCC80050AEC3 /* CopyFiles */ = {
+		900DA16C1436C9630032BFB8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				900DA1671436C95D0032BFB8 /* Growl-WithInstaller.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +170,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "RaneKeys" */;
 			buildPhases = (
-				90D708561435BCC80050AEC3 /* CopyFiles */,
+				900DA16C1436C9630032BFB8 /* CopyFiles */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
